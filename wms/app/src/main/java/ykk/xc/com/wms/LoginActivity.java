@@ -4,6 +4,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -40,15 +41,15 @@ public class LoginActivity extends BaseActivity {
 
 
     // 消息处理
-    final MyHandler handler=new MyHandler(this);
+    final MyHandler mHandler = new MyHandler(this);
     private static class MyHandler extends Handler {
         private final WeakReference<LoginActivity> mActivity;
         public MyHandler(LoginActivity activity) {
             mActivity = new WeakReference<LoginActivity>(activity);
         }
         public void handleMessage(android.os.Message msg) {
-            LoginActivity activity = mActivity.get();
-            if(activity!=null){
+            LoginActivity m = mActivity.get();
+            if(m!=null){
 
             }
         };
@@ -149,10 +150,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        if(handler!=null){
-            handler.removeCallbacksAndMessages(null);
-        }
+        closeHandler(mHandler);
         super.onDestroy();
     }
-
 }

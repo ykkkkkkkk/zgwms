@@ -314,15 +314,15 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
     }
 
 
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            printUtils.closeport(); // 关闭打印端口
-//            closeHandler(mHandler);
-//            context.finish();
-//        }
-//        return false;
-//    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            printUtils.closeport(); // 关闭打印端口
+            closeHandler(mHandler);
+            context.finish();
+        }
+        return false;
+    }
 
     @Override
     protected void onDestroy() {

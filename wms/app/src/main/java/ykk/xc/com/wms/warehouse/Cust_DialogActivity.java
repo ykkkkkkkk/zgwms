@@ -158,14 +158,14 @@ public class Cust_DialogActivity extends BaseActivity {
         });
     }
 
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            closeHandler(mHandler);
-//            context.finish();
-//        }
-//        return false;
-//    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            closeHandler(mHandler);
+            context.finish();
+        }
+        return false;
+    }
 
     @Override
     protected void onDestroy() {
