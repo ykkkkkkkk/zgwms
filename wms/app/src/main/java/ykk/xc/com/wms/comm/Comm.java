@@ -1,5 +1,20 @@
 package ykk.xc.com.wms.comm;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,22 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.TextView;
+import ykk.xc.com.wms.R;
 
 
 /**
@@ -300,6 +300,25 @@ public class Comm {
 		@SuppressWarnings("unchecked")
 		List<T> dast = (List<T>) in.readObject();
 		return dast;
+	}
+
+	/**
+	 * 关闭的dialog
+	 */
+	/**
+	 * 关闭
+	 * @param context
+	 * @param message
+	 * @return
+	 */
+	public static void showDialogClose(Activity context, String message) {
+		AlertDialog.Builder build = new AlertDialog.Builder(context);
+		build.setIcon(R.drawable.caution);
+		build.setTitle("系统提示您");
+		build.setMessage(message);
+		build.setNegativeButton("关闭", null);
+		build.setCancelable(false);
+		build.show();
 	}
 
 }

@@ -27,7 +27,9 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import ykk.xc.com.wms.R;
 import ykk.xc.com.wms.comm.BaseActivity;
+import ykk.xc.com.wms.comm.UncaughtException;
 import ykk.xc.com.wms.model.t_Supplier;
+import ykk.xc.com.wms.util.LoadingDialog;
 
 public class Ware_Pur_InActivity extends BaseActivity {
 
@@ -70,6 +72,7 @@ public class Ware_Pur_InActivity extends BaseActivity {
     @BindView(R.id.btn_add)
     Button btnAdd;
     private Ware_Pur_InActivity context = this;
+    private LoadingDialog mLoadDialog;
     private static final int SEL_CUST = 10;
     private t_Supplier supplier; // 供应商
 
@@ -86,8 +89,13 @@ public class Ware_Pur_InActivity extends BaseActivity {
         }
 
         public void handleMessage(Message msg) {
-            Ware_Pur_InActivity activity = mActivity.get();
-            if (activity != null) {
+            Ware_Pur_InActivity m = mActivity.get();
+            if (m != null) {
+                if(m.mLoadDialog != null && m.mLoadDialog.isShowing()) {
+                    m.mLoadDialog.dismiss();
+                    m.mLoadDialog = null;
+                }
+
 
             }
         }
@@ -100,6 +108,7 @@ public class Ware_Pur_InActivity extends BaseActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.wh_pur_in);
         ButterKnife.bind(this);
+        UncaughtException.getInstance().setContext(context);
 
         initDatas();
     }
@@ -215,14 +224,14 @@ public class Ware_Pur_InActivity extends BaseActivity {
         }
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            closeHandler(mHandler);
-            context.finish();
-        }
-        return false;
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            closeHandler(mHandler);
+//            context.finish();
+//        }
+//        return false;
+//    }
 
     @Override
     protected void onDestroy() {

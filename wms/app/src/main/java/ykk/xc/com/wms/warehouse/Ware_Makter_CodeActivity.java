@@ -41,6 +41,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import ykk.xc.com.wms.R;
 import ykk.xc.com.wms.comm.BaseActivity;
+import ykk.xc.com.wms.comm.UncaughtException;
 
 public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
 
@@ -92,6 +93,7 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wh_maker_code);
         ButterKnife.bind(this);
+        UncaughtException.getInstance().setContext(context);
 
         initDatas();
     }
@@ -312,15 +314,15 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
     }
 
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            printUtils.closeport(); // 关闭打印端口
-            closeHandler(mHandler);
-            context.finish();
-        }
-        return false;
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            printUtils.closeport(); // 关闭打印端口
+//            closeHandler(mHandler);
+//            context.finish();
+//        }
+//        return false;
+//    }
 
     @Override
     protected void onDestroy() {

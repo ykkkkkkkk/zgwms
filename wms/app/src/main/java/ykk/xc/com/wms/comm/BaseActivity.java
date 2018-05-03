@@ -1,11 +1,9 @@
 package ykk.xc.com.wms.comm;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,9 +31,8 @@ import ykk.xc.com.wms.R;
  * @author yu
  *
  */
-@SuppressLint("HandlerLeak")
 public class BaseActivity extends AppCompatActivity {
-
+	private BaseActivity mContext;
 	private boolean isExist;
 
 	private Handler mHandle = new Handler() {
@@ -48,7 +45,9 @@ public class BaseActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// 不允许旋转
+
+		ActivityCollector.addActivity(this);
+
 	}
 
 	/**
@@ -62,6 +61,13 @@ public class BaseActivity extends AppCompatActivity {
 		} else {
 			return super.onKeyDown(keyCode, event);
 		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		ActivityCollector.removeActivity(this);
 	}
 
 	/**
@@ -99,7 +105,8 @@ public class BaseActivity extends AppCompatActivity {
 					Toast.LENGTH_SHORT).show();
 			mHandle.sendEmptyMessageDelayed(0, 2000);
 		} else {
-			ExitApplication.getInstance().exit();
+//			ExitApplication.getInstance().exit();
+			ActivityCollector.finishAll();
 //			// 杀死进程
 //        	android.os.Process.killProcess(android.os.Process.myPid());
 //        	// 退出

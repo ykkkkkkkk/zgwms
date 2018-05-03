@@ -30,8 +30,10 @@ import ykk.xc.com.wms.R;
 import ykk.xc.com.wms.comm.BaseActivity;
 import ykk.xc.com.wms.comm.Comm;
 import ykk.xc.com.wms.comm.OnItemClickListener;
+import ykk.xc.com.wms.comm.UncaughtException;
 import ykk.xc.com.wms.model.t_Supplier;
 import ykk.xc.com.wms.util.JsonUtil;
+import ykk.xc.com.wms.util.LoadingDialog;
 import ykk.xc.com.wms.warehouse.adapter.Cust_DialogAdapter;
 
 /**
@@ -49,6 +51,7 @@ public class Cust_DialogActivity extends BaseActivity {
     private Cust_DialogAdapter mAdapter;
     private OkHttpClient okHttpClient = new OkHttpClient();
     private FormBody formBody = null;
+    private LoadingDialog mLoadDialog;
 
     // 消息处理
     private MyHandler mHandler = new MyHandler(this);
@@ -63,6 +66,10 @@ public class Cust_DialogActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             Cust_DialogActivity m = mActivity.get();
             if (m != null) {
+                if(m.mLoadDialog != null && m.mLoadDialog.isShowing()) {
+                    m.mLoadDialog.dismiss();
+                    m.mLoadDialog = null;
+                }
                 switch (msg.what) {
                     case SUCC1: // 成功
                         m.list = JsonUtil.stringToList((String) msg.obj, t_Supplier.class);
@@ -84,6 +91,7 @@ public class Cust_DialogActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wh_cust_dialog);
         ButterKnife.bind(this);
+        UncaughtException.getInstance().setContext(context);
 
         initDatas();
         okhttpGetDatas();
@@ -105,6 +113,7 @@ public class Cust_DialogActivity extends BaseActivity {
      * 供应商信息
      */
     private void okhttpGetDatas() {
+        mLoadDialog = new LoadingDialog(context, "加载中", true);
         String mUrl = Comm.getURL("t_Supplier");
         Request.Builder requestBuilder = new Request.Builder().url(mUrl);
         requestBuilder.method("GET", null);
@@ -149,14 +158,14 @@ public class Cust_DialogActivity extends BaseActivity {
         });
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            closeHandler(mHandler);
-            context.finish();
-        }
-        return false;
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            closeHandler(mHandler);
+//            context.finish();
+//        }
+//        return false;
+//    }
 
     @Override
     protected void onDestroy() {
