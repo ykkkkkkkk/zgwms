@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -125,15 +126,19 @@ public class Ware_Pur_InActivity extends BaseActivity {
 
                 break;
             case R.id.btn_whName:
+                showForResult(context, Cust_DialogActivity.class, SEL_CUST, null);
 
                 break;
             case R.id.btn_whArea:
+                showForResult(context, Cust_DialogActivity.class, SEL_CUST, null);
 
                 break;
             case R.id.btn_whPos:
+                showForResult(context, Cust_DialogActivity.class, SEL_CUST, null);
 
                 break;
             case R.id.btn_deptName:
+                showForResult(context, Cust_DialogActivity.class, SEL_CUST, null);
 
                 break;
             case R.id.btn_add:
@@ -208,6 +213,15 @@ public class Ware_Pur_InActivity extends BaseActivity {
 
                 break;
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            closeHandler(mHandler);
+            context.finish();
+        }
+        return false;
     }
 
     @Override
