@@ -35,4 +35,5 @@ dependencies {
     implementation 'com.solidfire.code.gson:gson:2.6.2'
     implementation files('src/main/libs/bluetooth.jar')
     implementation files('src/main/libs/ethernet.jar')
+    implementation files('src/main/libs/ksoap2-android-assembly-3.5.0-jar-with-dependencies.jar')
 }

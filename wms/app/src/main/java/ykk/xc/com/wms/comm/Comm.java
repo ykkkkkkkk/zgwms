@@ -34,28 +34,16 @@ import ykk.xc.com.wms.R;
  *
  */
 public class Comm {
-	// 将输入的ip地址保存到手机
-	public static String ip;// 保存ip地址
-	// 将输入的"端口号"保存到手机
-	public static String port;// 保存端口
-
-	public static String getIp() {
-		return ip;
-	}
-	public static void setIp(String ipAddress) {
-		Comm.ip = ipAddress;
-	}
-	public static String getPort() {
-		return port;
-	}
-	public static void setPort(String port) {
-		Comm.port = port;
-	}
-
-	/** 服务端的ip地址和端口	*/
-	public static String getURL(String param) {
-		return "http://" + ip + ":" + port + "/api/"+param;
-	}
+	/**
+	 * 基于soap协议
+	 * webService uri
+ 	 */
+	public static final String WEB_URI = "http://183.60.183.21:8009/cbsw.asmx";
+	/**
+	 * 基于soap协议
+	 * XML的命名空间
+	 */
+	public static final String XMLNS = "http://tempuri.org/";
 
 	/**
 	 * 字符串截取

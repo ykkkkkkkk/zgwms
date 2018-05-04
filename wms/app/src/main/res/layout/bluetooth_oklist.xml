@@ -43,7 +43,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/back_style_blue2"
         android:gravity="center"
-        android:orientation="horizontal"></LinearLayout>
+        android:orientation="vertical"></LinearLayout>
 
 
 </LinearLayout>

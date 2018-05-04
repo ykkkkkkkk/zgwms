@@ -3,9 +3,10 @@ package ykk.xc.com.wms.warehouse;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothHeadset;
-import android.content.DialogInterface;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,7 +21,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.tscdll.TSCActivity;
 
@@ -43,8 +43,7 @@ import ykk.xc.com.wms.R;
 import ykk.xc.com.wms.comm.BaseActivity;
 import ykk.xc.com.wms.comm.UncaughtException;
 
-public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
-
+public class Ware_Makter_CodeActivity extends BaseActivity {
 
     @BindView(R.id.btn_close)
     Button btnClose;
@@ -56,9 +55,8 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
     private Ware_Makter_CodeActivity context = this;
     private TSCActivity printUtils = new TSCActivity();
     private BluetoothAdapter mBluetoothAdapter;
-    private AlertDialog alertDialog;
-    private boolean isConnect; // 蓝牙是否连接
-
+    private AlertDialog alertDialog; // 已配对蓝牙列表dialog
+    private boolean isConnected; // 判断是否连接蓝牙设备
     private OkHttpClient okHttpClient = new OkHttpClient();
     private FormBody formBody = null;
 
@@ -79,15 +77,6 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
         }
     }
 
-    //打开蓝牙
-    public void bluetooth() {
-        BluetoothAdapter mAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (!mAdapter.isEnabled()) {
-            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivity(enabler);
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,9 +88,9 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
     }
 
     private void initDatas() {
-        bluetooth(); // 跳到打开蓝牙设置
         // 获取所有已经绑定的蓝牙设备
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        registerReceiver(mReceiver , makeFilters());
 
     }
 
@@ -109,19 +98,43 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_close:
+                unregisterReceiver(mReceiver);
                 printUtils.closeport(); // 关闭打印端口
                 closeHandler(mHandler);
                 context.finish();
 
                 break;
             case R.id.btn_search:
-                if(isConnect) {
+                //获取蓝牙适配器实例。如果设备不支持蓝牙则返回null
+                if(mBluetoothAdapter == null) {
+                    print_fun(context, "设备不支持蓝牙！");
+                    return;
+                }
+                // 判断蓝牙是否开启
+                if(!mBluetoothAdapter.isEnabled()) {
+                    // 蓝牙未开启，打开蓝牙
+                    openBluetooth();
+                    return;
+                }
+                // 判断状态为连接
+                if(isConnected) {
                     printContent();
                 } else {
                     pair();
                 }
 
                 break;
+        }
+    }
+
+    /**
+     * 打开蓝牙
+     */
+    private void openBluetooth() {
+        BluetoothAdapter mAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!mAdapter.isEnabled()) {
+            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivity(enabler);
         }
     }
 
@@ -135,6 +148,9 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
         // 初始化id
         Button btn_close = (Button) v.findViewById(R.id.btn_close);
         LinearLayout lin_oklist = v.findViewById(R.id.lin_oklist);
+        if(lin_oklist.getChildCount() > 0) { // 每次都清空子View
+            lin_oklist.removeAllViews();
+        }
 
         // 单击事件
         View.OnClickListener click = new View.OnClickListener() {
@@ -156,7 +172,7 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
         if (devices.size() > 0) {
             for (BluetoothDevice blueDevice : devices) {
                 String str = blueDevice.getName()+" : ("+blueDevice.getAddress()+")";
-                addLinearLayout(lin_oklist, str); // 添加到布局
+                addView(lin_oklist, str); // 添加到布局
             }
 
             Window window = alertDialog.getWindow();
@@ -166,17 +182,12 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
         } else {
             print_fun(context, "请先配对蓝牙打印机！");
         }
-
-//        Window window = alertDialog.getWindow();
-//        alertDialog.setCancelable(false);
-//        alertDialog.show();
-//        window.setGravity(Gravity.CENTER);
     }
 
     /**
      * 添加到LinearLayout
      */
-    private void addLinearLayout(LinearLayout lin, String twoMenuName) {
+    private void addView(LinearLayout lin, String twoMenuName) {
         View v = LayoutInflater.from(context).inflate(R.layout.bluetooth_oklist_item, null);
         final TextView tv_item = (TextView) v.findViewById(R.id.tv_item);
         tv_item.setText(twoMenuName);
@@ -189,7 +200,7 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
                 // 截取的格式为：名称:(20:20:20:20:20),只截取括号里的
                 String address = item.substring(item.indexOf("(")+1, item.indexOf(")"));
                 printUtils.openport(address);
-                isConnect = true;
+
                 if (alertDialog != null && alertDialog.isShowing()) {
                     alertDialog.dismiss();
                 }
@@ -207,7 +218,7 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
      * 打印条码的方法
      */
     private void printContent() {
-        printUtils.setup(40, 30, 4, 4, 0, 2, 0);
+        printUtils.setup(40, 30, 4, 5, 0, 2, 0);
         printUtils.clearbuffer();
         String s = "TEXT 90,5,\"TSS24.BF2\",0,1,2,\"人工牙种植体 \n" +
                    "TEXT 20,50,\"TSS24.BF2\",0,1,1,\"生产厂商:ykk \n" +
@@ -223,46 +234,9 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
         }
         printUtils.sendcommand(b); // 打印字体
         // 条码和字体的行间距：28
-        printUtils.barcode(25,178,"39",50,0,0,1,3,"123456789");
+        printUtils.barcode(25,178,"39",40,1,0,1,3,"123456789");
         printUtils.printlabel(1, 1);
     }
-
-    @Override
-    public void run() {
-//        Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
-//        if (devices.size() > 0) {
-//            for (final BluetoothDevice bluetoothDevice : devices) {
-//                String str = bluetoothDevice.getAddress();
-//                int index = 0;
-//                //if (str.equals("Gprinter")){}
-//
-        String str = "DC:0D:30:0D:85:E4";
-                final String[] sexArry = {str};//地址列表
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);// 自定义对话框
-                builder.setIcon(R.mipmap.ic_launcher);
-                builder.setTitle("选择你要打开的蓝牙");
-                //final String[] finalSexArry = sexArry;
-                builder.setSingleChoiceItems(sexArry, 0, new DialogInterface.OnClickListener() {// 默认的选中
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {// which是被选中的位置
-                        //showToast(which+"");
-                        //selectAdress.setText(sexArry[which]);
-                        Toast.makeText(context, "已连接", Toast.LENGTH_LONG).show();
-
-                        printUtils.openport(sexArry[which]);
-
-                        dialog.dismiss();//随便点击一个item消失对话框，不用点击确认取消
-
-                    }
-                });
-                builder.show();// 让弹出框显示
-//            }
-//
-//        }
-    }
-
 
     private void okhttpGet() {
         // step 2： 创建一个请求，不指定请求方法时默认是GET。
@@ -317,6 +291,7 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            unregisterReceiver(mReceiver);
             printUtils.closeport(); // 关闭打印端口
             closeHandler(mHandler);
             context.finish();
@@ -324,9 +299,43 @@ public class Ware_Makter_CodeActivity extends BaseActivity  implements Runnable{
         return false;
     }
 
-    @Override
-    protected void onDestroy() {
-        closeHandler(mHandler);
-        super.onDestroy();
+    /**
+     * 广播监听蓝牙状态
+     */
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context2, Intent intent) {
+            String action = intent.getAction();
+            switch (action) {
+                case BluetoothDevice.ACTION_ACL_CONNECTED: // 已连接
+                    print_fun(context, "已连接蓝牙设备√");
+                    isConnected = true;
+
+                    break;
+                case BluetoothDevice.ACTION_ACL_DISCONNECTED:// 断开连接
+                    //蓝牙连接被切断
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    String name = device.getName();
+                    print_fun(context, name + "的连接已断开！");
+                    isConnected = false;
+
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 蓝牙监听需要添加的Action
+     */
+    private IntentFilter makeFilters(){
+        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction("android.openBluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED");
+//        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+//        intentFilter.addAction("android.openBluetooth.BluetoothAdapter.STATE_OFF");
+//        intentFilter.addAction("android.openBluetooth.BluetoothAdapter.STATE_ON");
+        return intentFilter;
     }
+
 }

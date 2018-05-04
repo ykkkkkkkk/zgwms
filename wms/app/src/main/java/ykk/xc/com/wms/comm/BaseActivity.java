@@ -33,14 +33,15 @@ import ykk.xc.com.wms.R;
  */
 public class BaseActivity extends AppCompatActivity {
 	private BaseActivity mContext;
-	private boolean isExist;
+//	private boolean isExist;
+	private long temptime;
 
-	private Handler mHandle = new Handler() {
-		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
-			isExist = false;
-		}
-	};
+//	private Handler mHandle = new Handler() {
+//		public void handleMessage(Message msg) {
+//			super.handleMessage(msg);
+//			isExist = false;
+//		}
+//	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +56,26 @@ public class BaseActivity extends AppCompatActivity {
 	 */
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			exit();
-			return false;
-		} else {
-			return super.onKeyDown(keyCode, event);
-		}
-	}
+//		if (keyCode == KeyEvent.KEYCODE_BACK) {
+//			exit();
+//			return false;
+//		} else {
+//			return super.onKeyDown(keyCode, event);
+//		}
+		// 使用系统时间来判读两次点击的间隔
+        if((keyCode == KeyEvent.KEYCODE_BACK)&&(event.getAction() == KeyEvent.ACTION_DOWN)) {
+				if(System.currentTimeMillis() - temptime > 2000) {// 2s内再次选择back键有效
+					System.out.println(Toast.LENGTH_LONG);
+					print_fun(this, "再按一次返回键退出系统");
+					temptime = System.currentTimeMillis();
+				} else {
+					ActivityCollector.finishAll();
+					System.exit(0); //凡是非零都表示异常退出!0表示正常退出!
+				}
+				return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
 	@Override
 	protected void onDestroy() {
@@ -99,21 +113,21 @@ public class BaseActivity extends AppCompatActivity {
 	 * 退出的方法
 	 */
 	public void exit() {
-		if (!isExist) {
-			isExist = true;
-			Toast.makeText(getApplicationContext(), "再按一次返回键退出系统",
-					Toast.LENGTH_SHORT).show();
-			mHandle.sendEmptyMessageDelayed(0, 2000);
-		} else {
+//		if (!isExist) {
+//			isExist = true;
+//			Toast.makeText(getApplicationContext(), "再按一次返回键退出系统",
+//					Toast.LENGTH_SHORT).show();
+//			mHandle.sendEmptyMessageDelayed(0, 2000);
+//		} else {
 //			ExitApplication.getInstance().exit();
-			ActivityCollector.finishAll();
+//			ActivityCollector.finishAll();
 //			// 杀死进程
 //        	android.os.Process.killProcess(android.os.Process.myPid());
 //        	// 退出
 //        	System.exit(0);
 //        	// 释放资源
 //        	System.gc();
-		}
+//		}
 	}
 
 	/** ------------------自定义方法-------------------- */
