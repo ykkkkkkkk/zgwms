@@ -74,6 +74,13 @@ public class Ware_Makter_CodeAdapter extends RecyclerView.Adapter<Ware_Makter_Co
             tv_fModel = v.findViewById(R.id.tv_fModel);
             tv_batch = v.findViewById(R.id.tv_batch);
             tv_print = v.findViewById(R.id.tv_print);
+
+            tv_print.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
         }
 
         @Override
