@@ -28,6 +28,7 @@ import okhttp3.ResponseBody;
 import ykk.xc.com.wms.R;
 import ykk.xc.com.wms.comm.BaseActivity;
 import ykk.xc.com.wms.comm.UncaughtException;
+import ykk.xc.com.wms.model.t_Department;
 import ykk.xc.com.wms.model.t_Supplier;
 import ykk.xc.com.wms.util.LoadingDialog;
 
@@ -63,7 +64,7 @@ public class Ware_Pur_InActivity extends BaseActivity {
     EditText etMatNo;
     @BindView(R.id.tv_matName)
     TextView tvMatName;
-    @BindView(R.id.tv_tupe)
+    @BindView(R.id.tv_type)
     TextView tvTupe;
     @BindView(R.id.et_num)
     EditText etNum;
@@ -73,8 +74,9 @@ public class Ware_Pur_InActivity extends BaseActivity {
     Button btnAdd;
     private Ware_Pur_InActivity context = this;
     private LoadingDialog mLoadDialog;
-    private static final int SEL_CUST = 10;
+    private static final int SEL_CUST = 10, SEL_DEPT = 11;
     private t_Supplier supplier; // 供应商
+    private t_Department department;
 
     private OkHttpClient okHttpClient = new OkHttpClient();
     private FormBody formBody = null;
@@ -135,19 +137,19 @@ public class Ware_Pur_InActivity extends BaseActivity {
 
                 break;
             case R.id.btn_whName:
-                showForResult(context, Cust_DialogActivity.class, SEL_CUST, null);
+//                showForResult(context, Cust_DialogActivity.class, SEL_CUST, null);
 
                 break;
             case R.id.btn_whArea:
-                showForResult(context, Cust_DialogActivity.class, SEL_CUST, null);
+//                showForResult(context, Cust_DialogActivity.class, SEL_CUST, null);
 
                 break;
             case R.id.btn_whPos:
-                showForResult(context, Cust_DialogActivity.class, SEL_CUST, null);
+//                showForResult(context, Cust_DialogActivity.class, SEL_CUST, null);
 
                 break;
             case R.id.btn_deptName:
-                showForResult(context, Cust_DialogActivity.class, SEL_CUST, null);
+                showForResult(context, Dept_DialogActivity.class, SEL_DEPT, null);
 
                 break;
             case R.id.btn_add:
@@ -214,9 +216,19 @@ public class Ware_Pur_InActivity extends BaseActivity {
             case SEL_CUST: //查询供应商	返回
                 if (resultCode == RESULT_OK) {
                     supplier = data.getParcelableExtra("obj");
-                    Log.e("onActivityResult---", supplier.getFname());
+                    Log.e("onActivityResult --> SEL_CUST", supplier.getFname());
                     if (supplier != null) {
                         setTexts(etCustSel, supplier.getFname());
+                    }
+                }
+
+                break;
+            case SEL_DEPT: //查询部门	返回
+                if (resultCode == RESULT_OK) {
+                    department = data.getParcelableExtra("obj");
+                    Log.e("onActivityResult --> SEL_DEPT", department.getFname());
+                    if (department != null) {
+                        setTexts(etDeptName, department.getFname());
                     }
                 }
 

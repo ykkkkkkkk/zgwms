@@ -31,24 +31,25 @@ import ykk.xc.com.wms.comm.BaseActivity;
 import ykk.xc.com.wms.comm.Comm;
 import ykk.xc.com.wms.comm.OnItemClickListener;
 import ykk.xc.com.wms.comm.UncaughtException;
-import ykk.xc.com.wms.model.t_Supplier;
+import ykk.xc.com.wms.model.t_Department;
 import ykk.xc.com.wms.util.JsonUtil;
 import ykk.xc.com.wms.util.LoadingDialog;
 import ykk.xc.com.wms.warehouse.adapter.Cust_DialogAdapter;
+import ykk.xc.com.wms.warehouse.adapter.Dept_DialogAdapter;
 
 /**
  * 选择供应商dialog
  */
-public class Cust_DialogActivity extends BaseActivity {
+public class Dept_DialogActivity extends BaseActivity {
 
     @BindView(R.id.btn_close)
     Button btnClose;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    private Cust_DialogActivity context = this;
+    private Dept_DialogActivity context = this;
     private static final int SUCC1 = 200, UNSUCC1 = 501;
-    private List<t_Supplier> list;
-    private Cust_DialogAdapter mAdapter;
+    private List<t_Department> list;
+    private Dept_DialogAdapter mAdapter;
     private OkHttpClient okHttpClient = new OkHttpClient();
     private FormBody formBody = null;
     private LoadingDialog mLoadDialog;
@@ -57,14 +58,14 @@ public class Cust_DialogActivity extends BaseActivity {
     private MyHandler mHandler = new MyHandler(this);
 
     private static class MyHandler extends Handler {
-        private final WeakReference<Cust_DialogActivity> mActivity;
+        private final WeakReference<Dept_DialogActivity> mActivity;
 
-        public MyHandler(Cust_DialogActivity activity) {
-            mActivity = new WeakReference<Cust_DialogActivity>(activity);
+        public MyHandler(Dept_DialogActivity activity) {
+            mActivity = new WeakReference<Dept_DialogActivity>(activity);
         }
 
         public void handleMessage(Message msg) {
-            Cust_DialogActivity m = mActivity.get();
+            Dept_DialogActivity m = mActivity.get();
             if (m != null) {
                 if(m.mLoadDialog != null && m.mLoadDialog.isShowing()) {
                     m.mLoadDialog.dismiss();
@@ -72,7 +73,7 @@ public class Cust_DialogActivity extends BaseActivity {
                 }
                 switch (msg.what) {
                     case SUCC1: // 成功
-                        m.list = JsonUtil.stringToList((String) msg.obj, t_Supplier.class);
+                        m.list = JsonUtil.stringToList((String) msg.obj, t_Department.class);
                         m.updateUI();
 
                         break;
@@ -89,7 +90,7 @@ public class Cust_DialogActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.wh_cust_dialog);
+        setContentView(R.layout.wh_dept_dialog);
         ButterKnife.bind(this);
         UncaughtException.getInstance().setContext(context);
 
@@ -114,7 +115,7 @@ public class Cust_DialogActivity extends BaseActivity {
      */
     private void okhttpGetDatas() {
         mLoadDialog = new LoadingDialog(context, "加载中", true);
-        String mUrl = Comm.getURL("t_Supplier");
+        String mUrl = Comm.getURL("t_Department");
         Request.Builder requestBuilder = new Request.Builder().url(mUrl);
         requestBuilder.method("GET", null);
 
@@ -133,7 +134,7 @@ public class Cust_DialogActivity extends BaseActivity {
                 ResponseBody body = response.body();
                 String result = body.string();
                 Message msg = mHandler.obtainMessage(SUCC1, result);
-                Log.e("Cust_DialogActivity --> onResponse", result);
+                Log.e("Dept_DialogActivity --> onResponse", result);
                 mHandler.sendMessage(msg);
             }
         });
@@ -145,13 +146,13 @@ public class Cust_DialogActivity extends BaseActivity {
     private void updateUI() {
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        mAdapter = new Cust_DialogAdapter(context, list);
+        mAdapter = new Dept_DialogAdapter(context, list);
         recyclerView.setAdapter(mAdapter);
 
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int pos) {
-                t_Supplier supplier = list.get(pos);
+                t_Department supplier = list.get(pos);
                 Intent intent = new Intent();
                 intent.putExtra("obj", supplier);
                 context.setResult(RESULT_OK, intent);

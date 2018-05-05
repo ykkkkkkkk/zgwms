@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
+import okhttp3.MediaType;
 import ykk.xc.com.wms.R;
 
 
@@ -35,15 +36,27 @@ import ykk.xc.com.wms.R;
  */
 public class Comm {
 	/**
+	 * WebService
 	 * 基于soap协议
 	 * webService uri
  	 */
 	public static final String WEB_URI = "http://183.60.183.21:8009/cbsw.asmx";
 	/**
+	 * WebService
 	 * 基于soap协议
 	 * XML的命名空间
 	 */
 	public static final String XMLNS = "http://tempuri.org/";
+
+	/**
+	 * API 接口
+	 * 服务端的ip地址和端口
+	 */
+	public static final String getURL(String param) {
+		return "http://183.62.46.37:8008/api/"+param;
+	}
+
+	public static final MediaType JSON = MediaType.parse("application/json");
 
 	/**
 	 * 字符串截取

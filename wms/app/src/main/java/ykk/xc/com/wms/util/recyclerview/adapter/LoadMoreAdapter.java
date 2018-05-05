@@ -67,7 +67,7 @@ public class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         // 通过判断显示类型，来创建不同的View
         if (viewType == TYPE_ITEM) {
 //            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recyclerview, parent, false);
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.wh_maker_code_adapter, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.wh_maker_code_item, parent, false);
             return new RecyclerViewHolder(view);
 
         } else if (viewType == TYPE_FOOTER) {

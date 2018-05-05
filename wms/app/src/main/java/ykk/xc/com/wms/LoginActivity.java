@@ -30,7 +30,9 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import ykk.xc.com.wms.comm.BaseActivity;
 import ykk.xc.com.wms.comm.Comm;
+import ykk.xc.com.wms.model.barcode_list;
 import ykk.xc.com.wms.util.JsonUtil;
+import ykk.xc.com.wms.warehouse.Ware_Pur_InActivity;
 
 public class LoginActivity extends BaseActivity {
 
@@ -80,8 +82,10 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.btn_login)
     public void onViewClicked() {
-//        show(context, Ware_Pur_InActivity.class, null);
-        req2();
+        show(context, Ware_Pur_InActivity.class, null);
+//        req2();
+//        okhttpGet();
+//        okhttpPost();
     }
 
 //    @OnClick({R.id.btn1, R.id.btn2})
@@ -106,7 +110,7 @@ public class LoginActivity extends BaseActivity {
 
     private void okhttpGet() {
         // step 2： 创建一个请求，不指定请求方法时默认是GET。
-        Request.Builder requestBuilder = new Request.Builder().url("http://japi.juhe.cn/joke/content/text.from?key=ae240f7fba620fc370b803566654949e&page=1&pagesize=10");
+        Request.Builder requestBuilder = new Request.Builder().url(Comm.getURL("barcode_list"));
         //可以省略，默认是GET请求
         requestBuilder.method("GET", null);
 
@@ -133,10 +137,25 @@ public class LoginActivity extends BaseActivity {
 
     private void okhttpPost() {
         formBody = new FormBody.Builder()
-                .add("name", "dsd")
+                .add("Email", "sample string 1")
                 .build();
-        Request request = new Request.Builder().url("http://183.62.46.37:8008/api/t_Supplier")
-                .post(formBody)
+        barcode_list b = new barcode_list();
+        b.setId(11);
+        b.setMtl_id(123);
+        b.setK3_fitemID(7);
+        b.setType(3);
+        b.setFnumber("311220011");
+        b.setSource_fnumber("1");
+        b.setSource_finterID(1);
+        b.setSource_fenteryID(5);
+        b.setBatch("d");
+        String mJson = JsonUtil.objectToString(b);
+        RequestBody body = RequestBody.create(Comm.JSON, mJson);
+
+        Request request = new Request.Builder()
+                .url(Comm.getURL("barcode_list/PostAdd"))
+//                .post(formBody)
+                .post(body)
                 .build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override

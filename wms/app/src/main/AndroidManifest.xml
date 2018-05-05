@@ -30,8 +30,12 @@
         <activity
             android:name=".warehouse.Cust_DialogActivity"
             android:theme="@style/dialogStyle" />
+        <activity
+            android:name=".warehouse.Dept_DialogActivity"
+            android:theme="@style/dialogStyle" />
         <activity android:name=".warehouse.Ware_Pur_InActivity" />
-        <activity android:name=".warehouse.Ware_Makter_CodeActivity" />
+        <activity android:name=".warehouse.Ware_Makter_CodeActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity android:name=".LoadMoreActivity" />
         <activity android:name=".LoadMoreWrapperActivity" />
     </application>

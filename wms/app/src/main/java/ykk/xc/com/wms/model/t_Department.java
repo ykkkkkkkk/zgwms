@@ -4,14 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * 供应商表t_Supplier
+ * 部门表t_Department
  */
-public class t_Supplier implements Parcelable {
-    //供应商表	t_Supplier
-    //id
-   // fitemID	K3 ID
-    //fnumber	供应商代码
-    //fname	供应商名称
+public class t_Department implements Parcelable {
     private int id;
     private int fitemID;
     private String fnumber;
@@ -59,7 +54,7 @@ public class t_Supplier implements Parcelable {
      * 而你拿到的nickname是username的数据
      * @param source
      */
-    public t_Supplier(Parcel source) {
+    public t_Department(Parcel source) {
         id = source.readInt();
         fitemID = source.readInt();
         fnumber = source.readString();
@@ -79,21 +74,21 @@ public class t_Supplier implements Parcelable {
         dest.writeString(fname);
     }
 
-    public static final Creator<t_Supplier> CREATOR = new Creator<t_Supplier>() {
+    public static final Parcelable.Creator<t_Department> CREATOR = new Parcelable.Creator<t_Department>() {
         /**
          * 供外部类反序列化本类数组使用
          */
         @Override
-        public t_Supplier[] newArray(int size) {
-            return new t_Supplier[size];
+        public t_Department[] newArray(int size) {
+            return new t_Department[size];
         }
 
         /**
          * 从Parcel中读取数据
          */
         @Override
-        public t_Supplier createFromParcel(Parcel source) {
-            return new t_Supplier(source);
+        public t_Department createFromParcel(Parcel source) {
+            return new t_Department(source);
         }
     };
 
