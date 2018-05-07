@@ -88,26 +88,6 @@ public class LoginActivity extends BaseActivity {
 //        okhttpPost();
     }
 
-//    @OnClick({R.id.btn1, R.id.btn2})
-//    public void onViewClicked(View view) {
-//        Intent intent = null;
-//        switch (view.getId()) {
-//            case R.id.btn1:
-////                okhttpGet();
-//                intent = new Intent(this, LoadMoreActivity.class);
-//
-//                break;
-//            case R.id.btn2:
-//                intent = new Intent(this, LoadMoreWrapperActivity.class);
-//
-//                break;
-//        }
-//
-//        if (intent != null) {
-//            startActivity(intent);
-//        }
-//    }
-
     private void okhttpGet() {
         // step 2： 创建一个请求，不指定请求方法时默认是GET。
         Request.Builder requestBuilder = new Request.Builder().url(Comm.getURL("barcode_list"));

@@ -36,6 +36,7 @@
         <activity android:name=".warehouse.Ware_Pur_InActivity" />
         <activity android:name=".warehouse.Ware_Makter_CodeActivity"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <activity android:name=".MainActivity" />
         <activity android:name=".LoadMoreActivity" />
         <activity android:name=".LoadMoreWrapperActivity" />
     </application>

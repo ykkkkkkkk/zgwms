@@ -41,7 +41,10 @@
     <color name="c_fffafa">#FFFAFA</color> 
     <!-- 紫色 -->
 	<color name="purple">#A28FDB</color>
-	<color name="purple_key">#6A4BC5</color> 
+	<color name="purple_key">#6A4BC5</color>
+
+    <color name="defaultColor">#11B1D5</color>
+    <color name="refresh_text">#A7A7A7</color>
 	
 	
 </resources>

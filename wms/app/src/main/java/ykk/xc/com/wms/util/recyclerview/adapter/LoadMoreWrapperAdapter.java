@@ -26,7 +26,7 @@ public class LoadMoreWrapperAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.adapter_recyclerview, parent, false);
+                .inflate(R.layout.test_recyclerview_item, parent, false);
         return new RecyclerViewHolder(view);
     }
 

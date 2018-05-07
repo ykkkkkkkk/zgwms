@@ -11,13 +11,14 @@ import java.util.List;
 
 import ykk.xc.com.wms.R;
 import ykk.xc.com.wms.comm.OnItemClickListener;
+import ykk.xc.com.wms.comm.OnItemClickListener2;
 import ykk.xc.com.wms.model.t_Supplier;
 
 public class Cust_DialogAdapter extends RecyclerView.Adapter<Cust_DialogAdapter.MyViewHolder> {
 
     private List<t_Supplier> datas;//存放数据
     private Activity context;
-    private OnItemClickListener mClickListener;
+    private OnItemClickListener2 mClickListener;
 
     public Cust_DialogAdapter(Activity context, List<t_Supplier> datas) {
         this.datas = datas;
@@ -31,7 +32,7 @@ public class Cust_DialogAdapter extends RecyclerView.Adapter<Cust_DialogAdapter.
         return holder;
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
+    public void setOnItemClickListener(OnItemClickListener2 listener) {
         this.mClickListener = listener;
     }
 
@@ -46,7 +47,6 @@ public class Cust_DialogAdapter extends RecyclerView.Adapter<Cust_DialogAdapter.
             mholder.tv_fnumber.setText(datas.get(pos).getFnumber());
             mholder.tv_fname.setText(datas.get(pos).getFname());
 
-
         }
     }
 
@@ -59,14 +59,14 @@ public class Cust_DialogAdapter extends RecyclerView.Adapter<Cust_DialogAdapter.
     //这里定义的是子项的类，不要在这里直接对获取对象进行操作
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView tv_row, tv_fnumber, tv_fname;
-        private OnItemClickListener mListener;// 声明自定义的接口
+        private OnItemClickListener2 mListener;// 声明自定义的接口
 
-        public MyViewHolder(View v, OnItemClickListener listener) {
+        public MyViewHolder(View v, OnItemClickListener2 listener) {
             super(v);
 
             mListener = listener;
             // 为ItemView添加点击事件
-            itemView.setOnClickListener(this);
+            v.setOnClickListener(this);
             tv_row = v.findViewById(R.id.tv_row);
             tv_fnumber = v.findViewById(R.id.tv_fnumber);
             tv_fname = v.findViewById(R.id.tv_fname);

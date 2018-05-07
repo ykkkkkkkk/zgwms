@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -50,11 +49,14 @@ import ykk.xc.com.wms.comm.BaseActivity;
 import ykk.xc.com.wms.comm.Comm;
 import ykk.xc.com.wms.comm.UncaughtException;
 import ykk.xc.com.wms.model.mtl;
+import ykk.xc.com.wms.model.t_Department;
 import ykk.xc.com.wms.util.JsonUtil;
 import ykk.xc.com.wms.util.LoadingDialog;
-import ykk.xc.com.wms.warehouse.adapter.Ware_Makter_CodeAdapter;
+import ykk.xc.com.wms.util.xrecyclerview.XRecyclerView;
+import ykk.xc.com.wms.warehouse.adapter.Ware_Makter_Code1Adapter;
+import ykk.xc.com.wms.warehouse.adapter.Ware_Makter_Code5Adapter;
 
-public class Ware_Makter_CodeActivity extends BaseActivity {
+public class Ware_Makter_CodeActivity extends BaseActivity implements XRecyclerView.LoadingListener {
 
     @BindView(R.id.btn_close)
     Button btnClose;
@@ -64,12 +66,23 @@ public class Ware_Makter_CodeActivity extends BaseActivity {
     Button btnSearch;
     @BindView(R.id.tv_selectType)
     TextView tvSelectType;
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
+    @BindView(R.id.xRecyclerView)
+    XRecyclerView xRecyclerView;
+    @BindView(R.id.lin_1)
+    LinearLayout lin1;
+    @BindView(R.id.lin_2)
+    LinearLayout lin2;
+//    @BindView(R.id.lin_3)
+//    LinearLayout lin3;
+//    @BindView(R.id.lin_4)
+//    LinearLayout lin4;
+    @BindView(R.id.lin_5)
+    LinearLayout lin5;
 
     private Ware_Makter_CodeActivity context = this;
     private static final int SUCC1 = 200, UNSUCC1 = 501;
     private TSCActivity printUtils = new TSCActivity();
+    private LinearLayout lin_temp;
     private BluetoothAdapter mBluetoothAdapter;
     private AlertDialog alertDialog; // 已配对蓝牙列表dialog
     private boolean isConnected; // 判断是否连接蓝牙设备
@@ -77,8 +90,15 @@ public class Ware_Makter_CodeActivity extends BaseActivity {
     private FormBody formBody = null;
     private char selectType = '1'; // 记录打印的是那个表
     private LoadingDialog mLoadDialog;
-    private List<mtl> list;
-    private Ware_Makter_CodeAdapter mAdapter;
+    private List<mtl> list1;
+//    private List<mtl> list2;
+//    private List<mtl> list3;
+//    private List<mtl> list4;
+    private List<t_Department> list5;
+
+    private Ware_Makter_Code1Adapter mAdapter1;
+//    private Ware_Makter_Code1Adapter mAdapter2;
+    private Ware_Makter_Code5Adapter mAdapter5;
 
     // 消息处理
     final MyHandler mHandler = new MyHandler(this);
@@ -93,13 +113,29 @@ public class Ware_Makter_CodeActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             Ware_Makter_CodeActivity m = mActivity.get();
             if (m != null) {
-                if(m.mLoadDialog != null && m.mLoadDialog.isShowing()) {
+                if (m.mLoadDialog != null && m.mLoadDialog.isShowing()) {
                     m.mLoadDialog.dismiss();
                     m.mLoadDialog = null;
                 }
                 switch (msg.what) {
                     case SUCC1: // 成功
-                        m.list = JsonUtil.stringToList((String) msg.obj, mtl.class);
+                        switch (m.selectType){
+                            case '1':
+                                m.list1 = JsonUtil.stringToList((String) msg.obj, mtl.class);
+                                break;
+                            case '2':
+
+                                break;
+//            case '3':
+
+//                break;
+//            case '4':
+//                mUrl = Comm.getURL("mtl");
+//                break;
+                            case '5':
+                                m.list5 = JsonUtil.stringToList((String) msg.obj, t_Department.class);
+                                break;
+                        }
                         m.updateUI();
 
                         break;
@@ -127,6 +163,7 @@ public class Ware_Makter_CodeActivity extends BaseActivity {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         registerReceiver(mReceiver, makeFilters());
 
+        lin_temp = lin1;
     }
 
     @OnClick({R.id.btn_close, R.id.tv_selectType, R.id.btn_search})
@@ -202,27 +239,32 @@ public class Ware_Makter_CodeActivity extends BaseActivity {
                     case R.id.btn1:// 物料表
                         tmpId = v.getId();
                         selectType = '1';
+                        setSelectType(lin1);
 
                         break;
                     case R.id.btn2:// 仓库表
                         tmpId = v.getId();
                         selectType = '2';
+                        setSelectType(lin2);
 
                         break;
 
                     case R.id.btn3:// 库区表
                         tmpId = v.getId();
                         selectType = '3';
+//                        setSelectType(linStock);
 
                         break;
                     case R.id.btn4:// 库区表
                         tmpId = v.getId();
                         selectType = '4';
+//                        setSelectType(linStock);
 
                         break;
                     case R.id.btn5:// 部门表
                         tmpId = v.getId();
                         selectType = '5';
+                        setSelectType(lin5);
 
                         break;
                 }
@@ -235,6 +277,17 @@ public class Ware_Makter_CodeActivity extends BaseActivity {
         popV.findViewById(R.id.btn3).setOnClickListener(click);
         popV.findViewById(R.id.btn4).setOnClickListener(click);
         popV.findViewById(R.id.btn5).setOnClickListener(click);
+    }
+
+    /**
+     * 选择了类型，数据跟着边
+     */
+    private void setSelectType(LinearLayout lin) {
+        if(lin_temp != null) {
+            lin_temp.setVisibility(View.GONE);
+        }
+        lin_temp = lin;
+        lin.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -354,6 +407,23 @@ public class Ware_Makter_CodeActivity extends BaseActivity {
     private void okhttpGetDatas() {
         mLoadDialog = new LoadingDialog(context, "加载中", true);
         String mUrl = Comm.getURL("mtl");
+        switch (selectType){
+            case '1':
+                mUrl = Comm.getURL("mtl");
+                break;
+            case '2':
+                mUrl = Comm.getURL("t_stock");
+                break;
+//            case '3':
+//                mUrl = Comm.getURL("mtl");
+//                break;
+//            case '4':
+//                mUrl = Comm.getURL("mtl");
+//                break;
+            case '5':
+                mUrl = Comm.getURL("t_Department");
+                break;
+        }
         Request.Builder requestBuilder = new Request.Builder().url(mUrl);
         requestBuilder.method("GET", null);
 
@@ -382,17 +452,125 @@ public class Ware_Makter_CodeActivity extends BaseActivity {
      * 更新UI
      */
     private void updateUI() {
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        mAdapter = new Ware_Makter_CodeAdapter(context, list);
-        recyclerView.setAdapter(mAdapter);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+//        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//        xRecyclerView.setLayoutManager(layoutManager);
+        if(mAdapter1 == null || mAdapter5 == null) {
 
-//        mAdapter.setOnItemClickListener(new OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View view, int pos) {
-//                mtl m = list.get(pos);
-//            }
-//        });
+            xRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+            xRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            switch (selectType){
+                case '1':
+                    mAdapter1 = new Ware_Makter_Code1Adapter(context, list1);
+                    xRecyclerView.setAdapter(mAdapter1);
+                    break;
+    //            case '2':
+//                mAdapter2 = new Ware_Makter_Code2Adapter(context, list2);
+    //                xRecyclerView.setAdapter(mAdapter2);
+    //                break;
+    //            case '3':
+//                mAdapter3 = new Ware_Makter_Code3Adapter(context, list3);
+    //                xRecyclerView.setAdapter(mAdapter3);
+    //                break;
+    //            case '4':
+//                mAdapter4 = new Ware_Makter_Code4Adapter(context, list4);
+    //                xRecyclerView.setAdapter(mAdapter4);
+    //                break;
+                case '5':
+                    mAdapter5 = new Ware_Makter_Code5Adapter(context, list5);
+                    xRecyclerView.setAdapter(mAdapter5);
+                    break;
+            }
+            xRecyclerView.setLoadingListener(context);
+            setListener();
+            xRecyclerView.setLoadingMoreEnabled(false); // 不显示下拉刷新的view
+
+        } else {
+            switch (selectType){
+                case '1':
+                    mAdapter1.notifyDataSetChanged();
+                    break;
+                //            case '2':
+//                mAdapter2.notifyDataSetChanged();
+                //                break;
+                //            case '3':
+//                mAdapter3.notifyDataSetChanged();
+                //                break;
+                //            case '4':
+//                mAdapter4.notifyDataSetChanged();
+                //                break;
+                case '5':
+                    mAdapter5.notifyDataSetChanged();
+                    break;
+            }
+        }
+    }
+
+    public void setListener() {
+        switch (selectType) {
+            case '1':
+                mAdapter1.setCallBack(new Ware_Makter_Code1Adapter.MyCallBack() {
+                    @Override
+                    public void onPrint(mtl entity, int position) {
+                        Log.e("EEE", entity.getFname());
+                    }
+                });
+                break;
+            //            case '2':
+//            mAdapter2.setCallBack(new Ware_Makter_Code2Adapter.MyCallBack() {
+//                @Override
+//                public void onPrint(mtl entity, int position) {
+//                    Log.e("EEE", entity.getFname());
+//                }
+//            });
+            //                break;
+            //            case '3':
+//            mAdapter3.setCallBack(new Ware_Makter_Code3Adapter.MyCallBack() {
+//                @Override
+//                public void onPrint(mtl entity, int position) {
+//                    Log.e("EEE", entity.getFname());
+//                }
+//            });
+            //                break;
+            //            case '4':
+//            mAdapter4.setCallBack(new Ware_Makter_Code4Adapter.MyCallBack() {
+//                @Override
+//                public void onPrint(mtl entity, int position) {
+//                    Log.e("EEE", entity.getFname());
+//                }
+//            });
+            //                break;
+            case '5':
+                mAdapter5.setCallBack(new Ware_Makter_Code5Adapter.MyCallBack() {
+                    @Override
+                    public void onPrint(t_Department entity, int position) {
+                        Log.e("EEE", entity.getFname());
+                    }
+                });
+                break;
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+//        isRefresh = true;
+//        isLoadMore = false;
+//        page = 1;
+//        initData();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                xRecyclerView.refreshComplete(true);
+            }
+        }, 2000);
+    }
+
+    @Override
+    public void onLoadMore() {
+//        isRefresh = false;
+//        isLoadMore = true;
+//        page += 1;
+//        initData();
     }
 
     @Override

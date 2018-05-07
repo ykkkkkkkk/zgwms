@@ -4,7 +4,8 @@ import android.view.View;
 
 /**
  * 自定义item事件接口
+ * param positon
  */
 public interface OnItemClickListener {
-    public void onItemClick(View view, int postion);
+    public void onItemClick(int postion);
 }

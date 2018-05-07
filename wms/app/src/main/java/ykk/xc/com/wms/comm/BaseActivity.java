@@ -48,7 +48,6 @@ public class BaseActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 
 		ActivityCollector.addActivity(this);
-
 	}
 
 	/**
@@ -356,7 +355,7 @@ public class BaseActivity extends AppCompatActivity {
 	 * @param context2    打开的页面
 	 * @param bundle  传值
 	 */
-	public void show(Context context,Class<?> context2,Bundle bundle){
+	public void show(Activity context, Class<?> context2, Bundle bundle){
 		Intent intent = new Intent();
 		intent.setClass(context, context2);
 		if(bundle!=null){

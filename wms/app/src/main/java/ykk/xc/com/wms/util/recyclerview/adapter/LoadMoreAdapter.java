@@ -1,5 +1,6 @@
 package ykk.xc.com.wms.util.recyclerview.adapter;
 
+import android.app.Activity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,7 +21,7 @@ import ykk.xc.com.wms.R;
  */
 
 public class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+    private Activity context;
     private List<String> dataList;
 
     // 普通布局
@@ -36,7 +37,8 @@ public class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     // 加载到底
     public final int LOADING_END = 3;
 
-    public LoadMoreAdapter(List<String> dataList) {
+    public LoadMoreAdapter(Activity context, List<String> dataList) {
+        this.context = context;
         this.dataList = dataList;
     }
     private OnItemClickListener mOnItemClickListener;
@@ -66,13 +68,11 @@ public class LoadMoreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
         // 通过判断显示类型，来创建不同的View
         if (viewType == TYPE_ITEM) {
-//            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_recyclerview, parent, false);
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.wh_maker_code_item, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.test_recyclerview_item, parent, false);
             return new RecyclerViewHolder(view);
 
         } else if (viewType == TYPE_FOOTER) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.layout_refresh_footer, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_refresh_footer, parent, false);
             return new FootViewHolder(view);
         }
         return null;

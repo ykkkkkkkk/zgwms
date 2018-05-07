@@ -29,7 +29,7 @@ import okhttp3.ResponseBody;
 import ykk.xc.com.wms.R;
 import ykk.xc.com.wms.comm.BaseActivity;
 import ykk.xc.com.wms.comm.Comm;
-import ykk.xc.com.wms.comm.OnItemClickListener;
+import ykk.xc.com.wms.comm.OnItemClickListener2;
 import ykk.xc.com.wms.comm.UncaughtException;
 import ykk.xc.com.wms.model.t_Department;
 import ykk.xc.com.wms.util.JsonUtil;
@@ -149,7 +149,7 @@ public class Dept_DialogActivity extends BaseActivity {
         mAdapter = new Dept_DialogAdapter(context, list);
         recyclerView.setAdapter(mAdapter);
 
-        mAdapter.setOnItemClickListener(new OnItemClickListener() {
+        mAdapter.setOnItemClickListener(new OnItemClickListener2() {
             @Override
             public void onItemClick(View view, int pos) {
                 t_Department supplier = list.get(pos);
