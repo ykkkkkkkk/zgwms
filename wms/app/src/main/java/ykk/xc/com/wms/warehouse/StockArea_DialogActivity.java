@@ -12,8 +12,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 
-import com.solidfire.gson.reflect.TypeToken;
-
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -33,40 +31,41 @@ import ykk.xc.com.wms.comm.BaseActivity;
 import ykk.xc.com.wms.comm.Comm;
 import ykk.xc.com.wms.comm.OnItemClickListener2;
 import ykk.xc.com.wms.comm.UncaughtException;
-import ykk.xc.com.wms.model.t_Supplier;
+import ykk.xc.com.wms.model.stock_area;
 import ykk.xc.com.wms.util.JsonUtil;
 import ykk.xc.com.wms.util.LoadingDialog;
-import ykk.xc.com.wms.warehouse.adapter.Cust_DialogAdapter;
+import ykk.xc.com.wms.warehouse.adapter.StockArea_DialogAdapter;
 
 /**
- * 选择供应商dialog
+ * 选择库区dialog
  */
-public class Cust_DialogActivity extends BaseActivity {
+public class StockArea_DialogActivity extends BaseActivity {
 
     @BindView(R.id.btn_close)
     Button btnClose;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    private Cust_DialogActivity context = this;
+    private StockArea_DialogActivity context = this;
     private static final int SUCC1 = 200, UNSUCC1 = 501;
-    private List<t_Supplier> list;
-    private Cust_DialogAdapter mAdapter;
+    private List<stock_area> list;
+    private StockArea_DialogAdapter mAdapter;
     private OkHttpClient okHttpClient = new OkHttpClient();
     private FormBody formBody = null;
     private LoadingDialog mLoadDialog;
+    private int stockId; // 仓库id
 
     // 消息处理
     private MyHandler mHandler = new MyHandler(this);
 
     private static class MyHandler extends Handler {
-        private final WeakReference<Cust_DialogActivity> mActivity;
+        private final WeakReference<StockArea_DialogActivity> mActivity;
 
-        public MyHandler(Cust_DialogActivity activity) {
-            mActivity = new WeakReference<Cust_DialogActivity>(activity);
+        public MyHandler(StockArea_DialogActivity activity) {
+            mActivity = new WeakReference<StockArea_DialogActivity>(activity);
         }
 
         public void handleMessage(Message msg) {
-            Cust_DialogActivity m = mActivity.get();
+            StockArea_DialogActivity m = mActivity.get();
             if (m != null) {
                 if(m.mLoadDialog != null && m.mLoadDialog.isShowing()) {
                     m.mLoadDialog.dismiss();
@@ -74,8 +73,7 @@ public class Cust_DialogActivity extends BaseActivity {
                 }
                 switch (msg.what) {
                     case SUCC1: // 成功
-//                        m.list = JsonUtil.stringToList((String) msg.obj, t_Supplier.class);
-                        m.list = m.gGson().fromJson((String) msg.obj, new TypeToken<List<t_Supplier>>(){}.getType());
+                        m.list = JsonUtil.stringToList((String) msg.obj, stock_area.class);
                         m.updateUI();
 
                         break;
@@ -92,16 +90,24 @@ public class Cust_DialogActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.wh_cust_dialog);
+        setContentView(R.layout.wh_stock_area_dialog);
         ButterKnife.bind(this);
         UncaughtException.getInstance().setContext(context);
 
         initDatas();
+        bundle();
         okhttpGetDatas();
     }
 
     private void initDatas() {
 
+    }
+
+    private void bundle() {
+        Bundle bundle = context.getIntent().getExtras();
+        if(bundle != null) {
+            stockId = bundle.getInt("stockId");
+        }
     }
 
     // 监听事件
@@ -117,7 +123,7 @@ public class Cust_DialogActivity extends BaseActivity {
      */
     private void okhttpGetDatas() {
         mLoadDialog = new LoadingDialog(context, "加载中", true);
-        String mUrl = Comm.getURL("t_Supplier");
+        String mUrl = Comm.getURL("stock_area"+(stockId>0 ? "/"+stockId : ""));
         Request.Builder requestBuilder = new Request.Builder().url(mUrl);
         requestBuilder.method("GET", null);
 
@@ -136,7 +142,7 @@ public class Cust_DialogActivity extends BaseActivity {
                 ResponseBody body = response.body();
                 String result = body.string();
                 Message msg = mHandler.obtainMessage(SUCC1, result);
-                Log.e("Cust_DialogActivity --> onResponse", result);
+                Log.e("StockArea_DialogActivity --> onResponse", result);
                 mHandler.sendMessage(msg);
             }
         });
@@ -148,13 +154,13 @@ public class Cust_DialogActivity extends BaseActivity {
     private void updateUI() {
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        mAdapter = new Cust_DialogAdapter(context, list);
+        mAdapter = new StockArea_DialogAdapter(context, list);
         recyclerView.setAdapter(mAdapter);
 
         mAdapter.setOnItemClickListener(new OnItemClickListener2() {
             @Override
             public void onItemClick(View view, int pos) {
-                t_Supplier supplier = list.get(pos);
+                stock_area supplier = list.get(pos);
                 Intent intent = new Intent();
                 intent.putExtra("obj", supplier);
                 context.setResult(RESULT_OK, intent);

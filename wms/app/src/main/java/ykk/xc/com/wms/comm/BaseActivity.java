@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.solidfire.gson.Gson;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -428,6 +430,10 @@ public class BaseActivity extends AppCompatActivity {
 		if(mHandle != null) {
 			mHandle.removeCallbacksAndMessages(null);
 		}
+	}
+
+	public Gson gGson() {
+		return new Gson();
 	}
 
 }

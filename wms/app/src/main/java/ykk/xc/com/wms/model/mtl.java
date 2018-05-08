@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * 物料表
  */
 public class mtl implements Parcelable {
-//    [id] [int] IDENTITY(1,1) NOT NULL,
+    //    [id] [int] IDENTITY(1,1) NOT NULL,
 //	[k3_fitemID] [int] NOT NULL,
 //	[FShortNumber] [nvarchar](50) NULL,
 //            [fnumber] [nvarchar](100) NULL,
@@ -23,7 +23,8 @@ public class mtl implements Parcelable {
     private String fnumber;
     private String fname;
     private String FModel;
-    private int funitID;
+    private int funitID; // 单位id
+    private String funitName; // 外加的 单位名称
     private boolean is_batch;
     private boolean is_sn;
     private String barcode;
@@ -108,6 +109,14 @@ public class mtl implements Parcelable {
         this.barcode = barcode;
     }
 
+    public String getFunitName() {
+        return funitName;
+    }
+
+    public void setFunitName(String funitName) {
+        this.funitName = funitName;
+    }
+
     /**
      * 这里的读的顺序必须与writeToParcel(Parcel dest, int flags)方法中
      * 写的顺序一致，否则数据会有差错，比如你的读取顺序如果是：
@@ -116,6 +125,7 @@ public class mtl implements Parcelable {
      * age = source.readInt();
      * 即调换了username和nickname的读取顺序，那么你会发现你拿到的username是nickname的数据，
      * 而你拿到的nickname是username的数据
+     *
      * @param source
      */
     public mtl(Parcel source) {

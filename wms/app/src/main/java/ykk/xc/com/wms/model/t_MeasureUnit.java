@@ -4,15 +4,15 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * 仓库表 t_stock
+ * 单位表 t_MeasureUnit
  */
-public class t_stock implements Parcelable {
+public class t_MeasureUnit implements Parcelable {
 //    [id] [int] IDENTITY(1,1) NOT NULL,
-//	[FItemID] [int] NOT NULL, 金蝶内码
-//	[FNumber] [nvarchar](50) NOT NULL, 金蝶代码
-//	[fname] [nvarchar](50) NOT NULL, 仓库名称
+//	[k3_FunitID] [int] NOT NULL,
+//	[FNumber] [nchar](20) NOT NULL,
+//	[fname] [nchar](20) NOT NULL,
     private int id;
-    private int FItemID;
+    private int k3_FunitID;
     private String FNumber;
     private String fname;
 
@@ -24,12 +24,12 @@ public class t_stock implements Parcelable {
         this.id = id;
     }
 
-    public int getFItemID() {
-        return FItemID;
+    public int getK3_FunitID() {
+        return k3_FunitID;
     }
 
-    public void setFItemID(int FItemID) {
-        this.FItemID = FItemID;
+    public void setK3_FunitID(int k3_FunitID) {
+        this.k3_FunitID = k3_FunitID;
     }
 
     public String getFNumber() {
@@ -47,7 +47,6 @@ public class t_stock implements Parcelable {
     public void setFname(String fname) {
         this.fname = fname;
     }
-
     /**
      * 这里的读的顺序必须与writeToParcel(Parcel dest, int flags)方法中
      * 写的顺序一致，否则数据会有差错，比如你的读取顺序如果是：
@@ -56,11 +55,12 @@ public class t_stock implements Parcelable {
      * age = source.readInt();
      * 即调换了username和nickname的读取顺序，那么你会发现你拿到的username是nickname的数据，
      * 而你拿到的nickname是username的数据
+     *
      * @param source
      */
-    public t_stock(Parcel source) {
+    public t_MeasureUnit(Parcel source) {
         id = source.readInt();
-        FItemID = source.readInt();
+        k3_FunitID = source.readInt();
         FNumber = source.readString();
         fname = source.readString();
     }
@@ -73,28 +73,28 @@ public class t_stock implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
-        dest.writeInt(FItemID);
+        dest.writeInt(k3_FunitID);
         dest.writeString(FNumber);
         dest.writeString(fname);
     }
 
-    public static final Parcelable.Creator<t_stock> CREATOR = new Parcelable.Creator<t_stock>() {
+    public static final Parcelable.Creator<t_MeasureUnit> CREATOR = new Parcelable.Creator<t_MeasureUnit>() {
         /**
          * 供外部类反序列化本类数组使用
          */
         @Override
-        public t_stock[] newArray(int size) {
-            return new t_stock[size];
+        public t_MeasureUnit[] newArray(int size) {
+            return new t_MeasureUnit[size];
         }
 
         /**
          * 从Parcel中读取数据
          */
         @Override
-        public t_stock createFromParcel(Parcel source) {
-            return new t_stock(source);
+        public t_MeasureUnit createFromParcel(Parcel source) {
+            return new t_MeasureUnit(source);
         }
     };
 
-
+    
 }

@@ -33,7 +33,17 @@
         <activity
             android:name=".warehouse.Dept_DialogActivity"
             android:theme="@style/dialogStyle" />
+        <activity
+            android:name=".warehouse.Stock_DialogActivity"
+            android:theme="@style/dialogStyle" />
+        <activity
+            android:name=".warehouse.StockArea_DialogActivity"
+            android:theme="@style/dialogStyle" />
+        <activity
+            android:name=".warehouse.StockPos_DialogActivity"
+            android:theme="@style/dialogStyle" />
         <activity android:name=".warehouse.Ware_Pur_InActivity" />
+        <activity android:name=".warehouse.Ware_Pur_OrderActivity" />
         <activity android:name=".warehouse.Ware_Makter_CodeActivity"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity android:name=".MainActivity" />
