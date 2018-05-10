@@ -117,6 +117,10 @@ public class mtl implements Parcelable {
         this.funitName = funitName;
     }
 
+    public mtl() {
+        super();
+    }
+
     /**
      * 这里的读的顺序必须与writeToParcel(Parcel dest, int flags)方法中
      * 写的顺序一致，否则数据会有差错，比如你的读取顺序如果是：

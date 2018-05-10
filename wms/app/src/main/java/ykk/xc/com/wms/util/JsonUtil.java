@@ -48,9 +48,7 @@ public class JsonUtil {
      * @return
      */
     public static <T> String objectToString(T object) {
-
         return mGson.toJson(object);
-
     }
 
 //    /**

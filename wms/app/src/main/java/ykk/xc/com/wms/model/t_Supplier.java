@@ -49,6 +49,10 @@ public class t_Supplier implements Parcelable {
         this.fname = fname;
     }
 
+    public t_Supplier() {
+        super();
+    }
+
     /**
      * 这里的读的顺序必须与writeToParcel(Parcel dest, int flags)方法中
      * 写的顺序一致，否则数据会有差错，比如你的读取顺序如果是：

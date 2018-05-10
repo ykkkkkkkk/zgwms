@@ -82,7 +82,8 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.btn_login)
     public void onViewClicked() {
-        show(context, Ware_Pur_InActivity.class, null);
+//        show(context, Ware_Pur_InActivity.class, null);
+        show(context, MainTabFragmentActivity.class, null);
 //        req2();
 //        okhttpGet();
 //        okhttpPost();

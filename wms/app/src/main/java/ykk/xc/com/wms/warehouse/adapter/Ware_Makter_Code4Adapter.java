@@ -7,27 +7,27 @@ import android.widget.TextView;
 import java.util.List;
 
 import ykk.xc.com.wms.R;
-import ykk.xc.com.wms.model.t_stock;
-import ykk.xc.com.wms.model.t_stock;
+import ykk.xc.com.wms.model.stock_position;
+import ykk.xc.com.wms.model.stock_position;
 import ykk.xc.com.wms.util.basehelper.BaseArrayRecyclerAdapter;
 
-public class Ware_Makter_Code2Adapter extends BaseArrayRecyclerAdapter<t_stock> {
+public class Ware_Makter_Code4Adapter extends BaseArrayRecyclerAdapter<stock_position> {
 
     private Activity context;
     private MyCallBack callBack;
 
-    public Ware_Makter_Code2Adapter(Activity context, List<t_stock> datas) {
+    public Ware_Makter_Code4Adapter(Activity context, List<stock_position> datas) {
         super(datas);
         this.context = context;
     }
 
     @Override
     public int bindView(int viewtype) {
-        return R.layout.wh_maker_code_item2;
+        return R.layout.wh_maker_code_item4;
     }
 
     @Override
-    public void onBindHoder(RecyclerHolder holder, final t_stock entity, final int pos) {
+    public void onBindHoder(RecyclerHolder holder, final stock_position entity, final int pos) {
             // 初始化id
             TextView tv_row = holder.obtainView(R.id.tv_row);
             TextView tv_fnumber = holder.obtainView(R.id.tv_fnumber);
@@ -35,7 +35,7 @@ public class Ware_Makter_Code2Adapter extends BaseArrayRecyclerAdapter<t_stock> 
             TextView tv_print = holder.obtainView(R.id.tv_print);
             // 赋值
             tv_row.setText(String.valueOf(pos + 1));
-            tv_fnumber.setText(entity.getFNumber());
+            tv_fnumber.setText(entity.getFnumber());
             tv_fname.setText(entity.getFname());
 
             View.OnClickListener click = new View.OnClickListener() {
@@ -59,7 +59,7 @@ public class Ware_Makter_Code2Adapter extends BaseArrayRecyclerAdapter<t_stock> 
     }
 
     public interface MyCallBack {
-        void onPrint(t_stock entity, int position);
+        void onPrint(stock_position entity, int position);
     }
 
 

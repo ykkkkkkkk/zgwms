@@ -8,10 +8,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +25,7 @@ import com.solidfire.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Method;
 import java.util.Random;
 
 import ykk.xc.com.wms.R;
@@ -278,6 +281,14 @@ public class BaseActivity extends AppCompatActivity {
 	}
 
 	/**
+	 * 说明:(字符串不能为空的终极判断 ) 作者: y1
+	 */
+	public String isNULL2(String obj, String defaVal) {
+		String result = isNULLS(obj);
+		return result.length() > 0 ? result : defaVal;
+	}
+
+	/**
 	 * 数字字符串转成Double 如果Double.parseDouble(null);这个是报空指针异常
 	 */
 	public double parseDouble(Object obj) {
@@ -421,6 +432,26 @@ public class BaseActivity extends AppCompatActivity {
 	public void hideKeyboard(View v) {
 		InputMethodManager imm = (InputMethodManager) v.getContext().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+	}
+
+	/**
+	 * 得到焦点后不谈出软键盘 只显示光标不显示软键盘
+	 */
+	public void hideSoftInputMode(Activity context, EditText edit) {
+		if (android.os.Build.VERSION.SDK_INT <= 10) {// 3.0以下使用
+			edit.setInputType(InputType.TYPE_NULL);
+		} else {// 3.0以上使用
+			context.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+			try {
+				Class<EditText> cls = EditText.class;
+				Method setFocus;
+				setFocus = cls.getMethod("setShowSoftInputOnFocus", boolean.class);
+				setFocus.setAccessible(true);
+				setFocus.invoke(edit, false);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**

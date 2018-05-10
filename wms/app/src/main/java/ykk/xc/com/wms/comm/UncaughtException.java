@@ -87,7 +87,7 @@ public class UncaughtException implements UncaughtExceptionHandler {
             intent.putExtra("crash", true);
 
             PendingIntent restartIntent = PendingIntent.getActivity(mApplication, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-            mgr.set(AlarmManager.RTC, System.currentTimeMillis()+1200, restartIntent);
+            mgr.set(AlarmManager.RTC, System.currentTimeMillis()+1000, restartIntent);
             // 杀死进程
             android.os.Process.killProcess(android.os.Process.myPid());
             // 退出

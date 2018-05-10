@@ -17,11 +17,13 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnFocusChange;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -35,7 +37,8 @@ import ykk.xc.com.wms.comm.Comm;
 import ykk.xc.com.wms.comm.UncaughtException;
 import ykk.xc.com.wms.model.PO_list;
 import ykk.xc.com.wms.model.Scanning_record;
-import ykk.xc.com.wms.model.barcode_list;
+import ykk.xc.com.wms.model.Scanning_record2;
+import ykk.xc.com.wms.model.mtl;
 import ykk.xc.com.wms.model.stock_area;
 import ykk.xc.com.wms.model.stock_position;
 import ykk.xc.com.wms.model.t_Department;
@@ -51,10 +54,8 @@ public class Ware_Pur_InActivity extends BaseActivity {
     Button btnClose;
     @BindView(R.id.btn_maker_code)
     Button btnMakerCode;
-    @BindView(R.id.et_custSel)
-    EditText etCustSel;
-    @BindView(R.id.btn_custSel)
-    Button btnCustSel;
+    @BindView(R.id.tv_custSel)
+    TextView tvCustSel;
     @BindView(R.id.et_whName)
     EditText etWhName;
     @BindView(R.id.btn_whName)
@@ -76,7 +77,7 @@ public class Ware_Pur_InActivity extends BaseActivity {
     @BindView(R.id.tv_matName)
     TextView tvMatName;
     @BindView(R.id.tv_type)
-    TextView tvTupe;
+    TextView tvType;
     @BindView(R.id.et_num)
     EditText etNum;
     @BindView(R.id.et_batchNo)
@@ -89,17 +90,20 @@ public class Ware_Pur_InActivity extends BaseActivity {
     RecyclerView recyclerView;
     @BindView(R.id.btn_save)
     Button btnSave;
+    @BindView(R.id.btn_matNo)
+    Button btnMatNo;
 
     private Ware_Pur_InActivity context = this;
     private LoadingDialog mLoadDialog;
-    private static final int SEL_ORDER = 10, SEL_CUST = 11, SEL_STOCK = 12, SEL_STOCKA = 13, SEL_STOCKP = 14, SEL_DEPT = 15;
+    private static final int SEL_ORDER = 10, SEL_CUST = 11, SEL_STOCK = 12, SEL_STOCKA = 13, SEL_STOCKP = 14, SEL_DEPT = 15, SEL_MAT = 16;
     private t_Supplier supplier; // 供应商
     private t_stock stock; // 仓库
     private stock_area stockA; // 库区
     private stock_position stockP; // 库位
     private t_Department department; // 部门
-    private List<PO_list> checkDatas;
+    private mtl mat; // 物料
     private Ware_Pur_InAdapter mAdapter;
+    private List<Scanning_record2> checkDatas;
 
 
     private OkHttpClient okHttpClient = new OkHttpClient();
@@ -141,12 +145,18 @@ public class Ware_Pur_InActivity extends BaseActivity {
     }
 
     private void initDatas() {
+        hideSoftInputMode(context, etMatNo);
+        hideSoftInputMode(context, etWhName);
+        hideSoftInputMode(context, etWhArea);
+        hideSoftInputMode(context, etWhPos);
+        hideSoftInputMode(context, etDeptName);
 
+        checkDatas = new ArrayList<Scanning_record2>();
     }
 
 
-    @OnClick({R.id.btn_close,R.id.tv_sourceNo,R.id.btn_maker_code,R.id.btn_custSel,R.id.btn_whName,
-              R.id.btn_whArea,R.id.btn_whPos,R.id.btn_deptName,R.id.btn_add,R.id.btn_save})
+    @OnClick({R.id.btn_close, R.id.tv_sourceNo, R.id.btn_maker_code, R.id.tv_custSel, R.id.btn_whName,
+            R.id.btn_whArea, R.id.btn_whPos, R.id.btn_deptName, R.id.btn_matNo, R.id.btn_add, R.id.btn_save})
     public void onViewClicked(View view) {
         Bundle bundle = null;
         switch (view.getId()) {
@@ -169,7 +179,7 @@ public class Ware_Pur_InActivity extends BaseActivity {
                 showForResult(context, Ware_Pur_OrderActivity.class, SEL_ORDER, bundle);
 
                 break;
-            case R.id.btn_custSel: // 选择供应商
+            case R.id.tv_custSel: // 选择供应商
                 showForResult(context, Cust_DialogActivity.class, SEL_CUST, null);
 
                 break;
@@ -197,20 +207,91 @@ public class Ware_Pur_InActivity extends BaseActivity {
                 showForResult(context, StockPos_DialogActivity.class, SEL_STOCKP, bundle);
 
                 break;
-            case R.id.btn_deptName:
+            case R.id.btn_deptName: // 选择部门
                 showForResult(context, Dept_DialogActivity.class, SEL_DEPT, null);
 
                 break;
-            case R.id.btn_add:
+            case R.id.btn_matNo: // 选择物料
+                showForResult(context, Mtl_ListActivity.class, SEL_MAT, null);
 
+                break;
+            case R.id.btn_add:
+                addRow();
 
                 break;
             case R.id.btn_save: // 保存
+                if(checkDatas == null || checkDatas.size() == 0) {
+                    print_fun(context, "请先插入行！");
+                    return;
+                }
                 okhttpPost();
 
                 break;
         }
     }
+
+    @OnFocusChange({R.id.et_whName, R.id.et_whArea, R.id.et_whPos, R.id.et_deptName, R.id.et_matNo})
+    public void onViewFocusChange(View v, boolean hasFocus) {
+        if (hasFocus) hideKeyboard(v);
+    }
+
+    /**
+     * 添加行
+     */
+    private void addRow() {
+        if(supplier == null) {
+            print_fun(context, "请选择供应商！");
+            return;
+        }
+        if(stock == null) {
+            print_fun(context, "请选择仓库！");
+            return;
+        }
+        if(stockA == null) {
+            print_fun(context, "请选择库区！");
+            return;
+        }
+        if(stockP == null) {
+            print_fun(context, "请选择库位！");
+            return;
+        }
+        if(mat == null) {
+            print_fun(context, "请选择物料！");
+            return;
+        }
+        double num = parseDouble(getValues(etNum).trim());
+        if(num == 0) {
+            print_fun(context, "请输入数量！");
+            return;
+        }
+        String batch = getValues(etBatchNo).trim();
+        if(mat.getIs_batch() && batch.length() == 0) {
+            print_fun(context, "该物料启用了批次，请输入批次！");
+            return;
+        }
+        Scanning_record2 sr2 = new Scanning_record2();
+//        sr2.setSource_finterID(1);
+        sr2.setSupplierID(supplier.getId());
+        sr2.setSupplierName(supplier.getFname());
+        sr2.setStockName(stock.getFname());
+        sr2.setStock_area_id(stockA.getID());
+        sr2.setStockAName(stockA.getFname());
+        sr2.setStock_position_id(stockP.getID());
+        sr2.setStockPName(stockP.getFname());
+        sr2.setFitemID(mat.getId());
+        sr2.setMatFnumber(mat.getFnumber());
+        sr2.setMatFname(mat.getFname());
+        sr2.setMatFModel(mat.getFModel());
+        sr2.setBatchno(batch);
+        sr2.setEmpID(department.getId());
+        sr2.setNum1(100);
+        sr2.setNum2(num); //
+        checkDatas.add(sr2);
+        // 隐藏键盘
+        hideKeyboard(btnAdd);
+        updateUI();
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -221,7 +302,7 @@ public class Ware_Pur_InActivity extends BaseActivity {
                     supplier = data.getParcelableExtra("obj");
                     Log.e("onActivityResult --> SEL_CUST", supplier.getFname());
                     if (supplier != null) {
-                        setTexts(etCustSel, supplier.getFname());
+                        tvCustSel.setText(supplier.getFname());
                     }
                 }
 
@@ -230,8 +311,8 @@ public class Ware_Pur_InActivity extends BaseActivity {
                 if (resultCode == RESULT_OK) {
                     Bundle bundle = data.getExtras();
                     if (bundle != null) {
-                        checkDatas = (List<PO_list>) bundle.getSerializable("checkDatas");
-                        updateUI();
+//                        checkDatas = (List<PO_list>) bundle.getSerializable("checkDatas");
+//                        updateUI();
                     }
                 }
 
@@ -276,6 +357,19 @@ public class Ware_Pur_InActivity extends BaseActivity {
                 }
 
                 break;
+            case SEL_MAT: //查询物料	返回
+                if (resultCode == RESULT_OK) {
+                    mat = data.getParcelableExtra("obj");
+                    Log.e("onActivityResult --> SEL_MAT", mat.getFname());
+                    if (mat != null) {
+                        setTexts(etMatNo, mat.getFnumber());
+                        tvMatName.setText(mat.getFname());
+                        tvType.setText(mat.getFModel());
+                        setTexts(etNum, mat.getIs_sn() ? "1":"");
+                    }
+                }
+
+                break;
         }
     }
 
@@ -305,9 +399,6 @@ public class Ware_Pur_InActivity extends BaseActivity {
 
 
     private void okhttpPost() {
-        formBody = new FormBody.Builder()
-                .add("Email", "sample string 1")
-                .build();
         Scanning_record record = new Scanning_record();
         record.setID(1);
         record.setType(2);
@@ -323,6 +414,7 @@ public class Ware_Pur_InActivity extends BaseActivity {
         record.setFdate("2018-05-08");
         record.setEmpID(1);
         record.setOperationID(1);
+//        String mJson = JsonUtil.objectToString(checkDatas.get(0));
         String mJson = JsonUtil.objectToString(record);
         RequestBody body = RequestBody.create(Comm.JSON, mJson);
 

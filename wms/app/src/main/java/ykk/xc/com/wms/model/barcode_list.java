@@ -94,4 +94,8 @@ public class barcode_list {
     public void setBatch(String batch) {
         this.batch = batch;
     }
+
+    public barcode_list() {
+        super();
+    }
 }

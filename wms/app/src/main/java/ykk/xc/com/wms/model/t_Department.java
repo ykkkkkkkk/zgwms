@@ -12,6 +12,8 @@ public class t_Department implements Parcelable {
     private String fnumber;
     private String fname;
 
+    private String barcode;
+
     public int getId() {
         return id;
     }
@@ -44,6 +46,18 @@ public class t_Department implements Parcelable {
         this.fname = fname;
     }
 
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public t_Department() {
+        super();
+    }
+
     /**
      * 这里的读的顺序必须与writeToParcel(Parcel dest, int flags)方法中
      * 写的顺序一致，否则数据会有差错，比如你的读取顺序如果是：
@@ -52,13 +66,14 @@ public class t_Department implements Parcelable {
      * age = source.readInt();
      * 即调换了username和nickname的读取顺序，那么你会发现你拿到的username是nickname的数据，
      * 而你拿到的nickname是username的数据
-     * @param source
+     * @param p
      */
-    public t_Department(Parcel source) {
-        id = source.readInt();
-        fitemID = source.readInt();
-        fnumber = source.readString();
-        fname = source.readString();
+    public t_Department(Parcel p) {
+        id = p.readInt();
+        fitemID = p.readInt();
+        fnumber = p.readString();
+        fname = p.readString();
+        barcode = p.readString();
     }
 
     @Override
@@ -67,11 +82,12 @@ public class t_Department implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeInt(fitemID);
-        dest.writeString(fnumber);
-        dest.writeString(fname);
+    public void writeToParcel(Parcel p, int flags) {
+        p.writeInt(id);
+        p.writeInt(fitemID);
+        p.writeString(fnumber);
+        p.writeString(fname);
+        p.writeString(barcode);
     }
 
     public static final Parcelable.Creator<t_Department> CREATOR = new Parcelable.Creator<t_Department>() {

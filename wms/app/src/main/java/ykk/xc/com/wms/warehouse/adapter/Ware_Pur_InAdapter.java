@@ -3,86 +3,54 @@ package ykk.xc.com.wms.warehouse.adapter;
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
 
 import ykk.xc.com.wms.R;
 import ykk.xc.com.wms.comm.OnItemClickListener2;
-import ykk.xc.com.wms.model.PO_list;
-import ykk.xc.com.wms.model.t_Supplier;
+import ykk.xc.com.wms.model.Scanning_record2;
+import ykk.xc.com.wms.model.mtl;
+import ykk.xc.com.wms.util.basehelper.BaseArrayRecyclerAdapter;
 
-public class Ware_Pur_InAdapter extends RecyclerView.Adapter<Ware_Pur_InAdapter.MyViewHolder> {
+public class Ware_Pur_InAdapter extends BaseArrayRecyclerAdapter<Scanning_record2> {
 
-    private List<PO_list> datas;//存放数据
     private Activity context;
-    private OnItemClickListener2 mClickListener;
+    private MyCallBack callBack;
 
-    public Ware_Pur_InAdapter(Activity context, List<PO_list> datas) {
-        this.datas = datas;
+    public Ware_Pur_InAdapter(Activity context, List<Scanning_record2> datas) {
+        super(datas);
         this.context = context;
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.wh_pur_in_item, parent, false);
-        MyViewHolder holder = new MyViewHolder(view, mClickListener);
-        return holder;
+    public int bindView(int viewtype) {
+        return R.layout.wh_pur_in_item;
     }
 
-    public void setOnItemClickListener(OnItemClickListener2 listener) {
-        this.mClickListener = listener;
-    }
-
-    //holder.itemView是子项视图的实例，holder.textView是子项内控件的实例
-    //position是点击位置
     @Override
-    public void onBindViewHolder(MyViewHolder holder, final int pos) {
-        //设置textView显示内容为list里的对应项
-        if (holder instanceof MyViewHolder) {
-            MyViewHolder mholder = (MyViewHolder) holder;
-            mholder.tv_row.setText(String.valueOf(pos + 1));
-//            PO_list p = datas.get(pos);
-            mholder.tv_mats.setText("ABC1234\nABCDE\n10*2");
-            mholder.tv_batch.setText("123");
-//            mholder.tv_nums.setText(Html.fromHtml("<font color=></font>"));
-            mholder.tv_nums.setText("100个\n12个");
-            mholder.tv_stockAP.setText("常温仓\n常温仓1号柜\n常温仓1号柜2号位");
-        }
+    public void onBindHoder(RecyclerHolder holder, final Scanning_record2 entity, final int pos) {
+        // 初始化id
+        TextView tv_row = holder.obtainView(R.id.tv_row);
+        TextView tv_mats = holder.obtainView(R.id.tv_mats);
+        TextView tv_batch = holder.obtainView(R.id.tv_batch);
+        TextView tv_nums = holder.obtainView(R.id.tv_nums);
+        TextView tv_stockAP = holder.obtainView(R.id.tv_stockAP);
+        // 赋值
+        tv_row.setText(String.valueOf(pos + 1));
+        tv_mats.setText(entity.getMatFnumber()+"\n"+entity.getMatFname()+"\n"+entity.getMatFModel());
+        tv_batch.setText(entity.getBatchno());
+        tv_nums.setText(Html.fromHtml(entity.getNum1()+"<br><font color='#FF6600'>"+entity.getNum2()+"</font>"));
+        tv_stockAP.setText(entity.getStockName()+"\n"+entity.getStockAName()+"\n"+entity.getStockPName());
     }
 
-    //要显示的子项数量
-    @Override
-    public int getItemCount() {
-        return datas.size();
+    public void setCallBack(MyCallBack callBack) {
+        this.callBack = callBack;
     }
 
-    //这里定义的是子项的类，不要在这里直接对获取对象进行操作
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView tv_row, tv_mats, tv_batch, tv_nums, tv_stockAP;
-        private OnItemClickListener2 mListener;// 声明自定义的接口
-
-        public MyViewHolder(View v, OnItemClickListener2 listener) {
-            super(v);
-
-            mListener = listener;
-            // 为ItemView添加点击事件
-            v.setOnClickListener(this);
-            tv_row = v.findViewById(R.id.tv_row);
-            tv_mats = v.findViewById(R.id.tv_mats);
-            tv_batch = v.findViewById(R.id.tv_batch);
-            tv_nums = v.findViewById(R.id.tv_nums);
-            tv_stockAP = v.findViewById(R.id.tv_stockAP);
-        }
-
-        @Override
-        public void onClick(View v) {
-            // getAdapterPosition()为Viewholder自带的一个方法，用来获取RecyclerView当前的位置，将此作为参数，传出去
-//            mListener.onItemClick(v, getAdapterPosition());
-        }
+    public interface MyCallBack {
+        void onPrint(mtl entity, int position);
     }
 
     /*之下的方法都是为了方便操作，并不是必须的*/
@@ -108,10 +76,10 @@ public class Ware_Pur_InAdapter extends RecyclerView.Adapter<Ware_Pur_InAdapter.
 //    }
 
     //清空显示数据
-    public void clearAll() {
-        datas.clear();
-        notifyDataSetChanged();
-    }
+//    public void clearAll() {
+//        datas.clear();
+//        notifyDataSetChanged();
+//    }
 
 
 }

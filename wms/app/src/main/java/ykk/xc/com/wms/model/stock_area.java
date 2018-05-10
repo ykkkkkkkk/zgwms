@@ -18,6 +18,8 @@ public class stock_area implements Parcelable {
     private String fname;
     private boolean is_storage_location;
 
+    private String barcode;
+
     public int getID() {
         return ID;
     }
@@ -58,6 +60,18 @@ public class stock_area implements Parcelable {
         this.is_storage_location = is_storage_location;
     }
 
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public stock_area() {
+        super();
+    }
+
     /**
      * 这里的读的顺序必须与writeToParcel(Parcel dest, int flags)方法中
      * 写的顺序一致，否则数据会有差错，比如你的读取顺序如果是：
@@ -66,15 +80,16 @@ public class stock_area implements Parcelable {
      * age = source.readInt();
      * 即调换了username和nickname的读取顺序，那么你会发现你拿到的username是nickname的数据，
      * 而你拿到的nickname是username的数据
-     * @param source
+     * @param p
      */
-    public stock_area(Parcel source) {
-        ID = source.readInt();
-        stock_id = source.readInt();
-        fnumber = source.readString();
-        fname = source.readString();
-        int storage_location = source.readInt();
+    public stock_area(Parcel p) {
+        ID = p.readInt();
+        stock_id = p.readInt();
+        fnumber = p.readString();
+        fname = p.readString();
+        int storage_location = p.readInt();
         is_storage_location = storage_location > 0 ? true : false;
+        barcode = p.readString();
     }
 
     @Override
@@ -83,12 +98,13 @@ public class stock_area implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(ID);
-        dest.writeInt(stock_id);
-        dest.writeString(fnumber);
-        dest.writeString(fname);
-        dest.writeInt(is_storage_location ? 1 : 0);
+    public void writeToParcel(Parcel p, int flags) {
+        p.writeInt(ID);
+        p.writeInt(stock_id);
+        p.writeString(fnumber);
+        p.writeString(fname);
+        p.writeInt(is_storage_location ? 1 : 0);
+        p.writeString(barcode);
     }
 
     public static final Parcelable.Creator<stock_area> CREATOR = new Parcelable.Creator<stock_area>() {

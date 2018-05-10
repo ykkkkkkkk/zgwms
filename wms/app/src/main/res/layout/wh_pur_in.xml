@@ -52,32 +52,18 @@
             android:textColor="#000000"
             android:textSize="12sp" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tv_custSel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginLeft="2dp"
             android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/et_custSel"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginLeft="2dp"
-                android:layout_weight="1"
-                android:background="@drawable/back_style_blue4"
-                android:inputType="none"
-                android:paddingLeft="2dp"
-                android:textSize="@dimen/_12sp" />
-
-            <Button
-                android:id="@+id/btn_custSel"
-                android:layout_width="@dimen/_38dip"
-                android:layout_height="match_parent"
-                android:background="@drawable/btn_blue3_selector"
-                android:text="▼"
-                android:textColor="@color/white" />
-        </LinearLayout>
+            android:background="@drawable/back_style_blue"
+            android:drawableRight="@drawable/xiala3"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -98,7 +84,7 @@
             android:layout_weight="1"
             android:background="@drawable/back_style_blue"
             android:drawableRight="@drawable/xiala3"
-            android:textSize="@dimen/_12sp" />
+            android:textSize="@dimen/_14sp" />
 
 
     </LinearLayout>
@@ -287,18 +273,32 @@
             android:textColor="#000000"
             android:textSize="12sp" />
 
-        <EditText
-            android:id="@+id/et_matNo"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="2dp"
             android:layout_weight="1"
-            android:background="@drawable/back_style_blue"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:inputType="none"
-            android:textSize="@dimen/_12sp" />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/et_matNo"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/back_style_blue4"
+                android:inputType="none"
+                android:paddingLeft="@dimen/_2dip"
+                android:textSize="@dimen/_12sp" />
+
+            <Button
+                android:id="@+id/btn_matNo"
+                android:layout_width="@dimen/_38dip"
+                android:layout_height="match_parent"
+                android:background="@drawable/btn_blue3_selector"
+                android:text="▼"
+                android:textColor="@color/white" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -317,7 +317,10 @@
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
             android:layout_weight="1"
-            android:background="@drawable/back_style_blue" />
+            android:textColor="@color/black"
+            android:background="@drawable/back_style_gray3"
+            android:gravity="center"
+            android:textSize="@dimen/_14sp" />
 
     </LinearLayout>
 
@@ -345,7 +348,10 @@
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
             android:layout_weight="1"
-            android:background="@drawable/back_style_blue" />
+            android:background="@drawable/back_style_gray3"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -366,7 +372,8 @@
             android:layout_weight="1"
             android:background="@drawable/back_style_blue"
             android:inputType="numberDecimal"
-            android:textSize="@dimen/_12sp" />
+            android:paddingLeft="@dimen/_2dip"
+            android:textSize="@dimen/_14sp" />
 
     </LinearLayout>
 
@@ -394,7 +401,9 @@
             android:layout_marginLeft="2dp"
             android:layout_weight="1"
             android:background="@drawable/back_style_blue"
-            android:textSize="@dimen/_12sp" />
+            android:inputType="none"
+            android:paddingLeft="@dimen/_2dip"
+            android:textSize="@dimen/_14sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -441,8 +450,8 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center"
             android:layout_weight="1.2"
+            android:gravity="center"
             android:text="物料代码\n名称/规格"
             android:textColor="#000000"
             android:textSize="12sp" />
@@ -466,8 +475,8 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center"
             android:layout_weight="1"
+            android:gravity="center"
             android:text="仓库/库区/\n库位"
             android:textColor="#000000"
             android:textSize="12sp" />
@@ -486,8 +495,8 @@
         android:id="@+id/btn_save"
         android:layout_width="match_parent"
         android:layout_height="38dp"
-        android:gravity="center"
         android:background="@drawable/btn_blue2_selector"
+        android:gravity="center"
         android:text="保存"
         android:textColor="@color/white"
         android:textSize="16sp" />
